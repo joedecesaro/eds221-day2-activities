@@ -31,7 +31,7 @@ mc_length_8_20 <- mack_verts$length1[8:20]
 mc_length_8_20
 
 mc_dates <- mack_verts$sampledate
-mc_dates
+
 ```
 
 Make a salamander subset for DITE
