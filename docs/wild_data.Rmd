@@ -1,0 +1,83 @@
+---
+title: "wild_data"
+author: "Joe DeCesaro"
+date: "8/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+## Part 3: Wild data
+```{r}
+mack_verts <- read_csv(here("data", "AS00601.csv"))
+mack_verts
+names(mack_verts)
+
+mack_verts <- mack_verts %>% 
+  clean_names()
+names(mack_verts)
+```
+
+```{r}
+mc_wt_5 <- mack_verts$weight[5]
+mc_wt_5
+
+mc_length_8_20 <- mack_verts$length1[8:20]
+mc_length_8_20
+
+mc_dates <- mack_verts$sampledate
+mc_dates
+```
+
+Make a salamander subset for DITE
+```{r}
+mc_salamanders <- mack_verts %>% 
+  filter(species == "DITE")
+
+mc_all_salamanders <- mack_verts %>% 
+  filter(species != "ONCL")
+
+```
+
+Make a scatterplot
+```{r}
+salamanders_plot <- ggplot(data = mc_all_salamanders, aes(x = length1, y = weight)) +
+  geom_point(aes(color = species,
+                 size = weight),
+             alpha = 0.4) +
+  labs(title = "Snout-Vent Length vs. Weight",
+       subtitle = "Salamanders are cool",
+       caption = "Data source: Aquatic Vertebrate Population Study in Mack Creek",
+       x = "Snout-Vent Length (mm)",
+       y = "Weight (g)") +
+  theme_dark()
+
+salamanders_plot
+
+ggsave(here::here("figs", "salamander_size.png"), plot = salamanders_plot)
+```
+
+Make a cutthroat plot:
+
+```{r}
+mc_fish <- mack_verts %>% 
+  filter(species == "ONCL")
+
+fish_plot <- ggplot(data = mc_fish, aes( x = length1, y = weight)) +
+  geom_point(aes(color = reach)) +
+  scale_color_manual(values = c("yellow", "purple", "green")) +
+  facet_wrap(~reach) +
+  labs(title = "Snout Length vs. Weight in Cutthroat Trout",
+       x = "Snout Length (mm)",
+       y = "Weight (g)") 
+
+fish_plot
+
+ggsave(here::here("figs", "cutthroat_size.png"), plot = fish_plot)
+```
+
